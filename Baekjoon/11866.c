@@ -1,39 +1,71 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-int main()
+typedef struct Node
 {
+    int data;
+    struct Node *next;
+    struct Node *prev;
+} Node;
 
-    int n, k;
-    scanf("%d %d", &n, &k);
-    int josephus[n], cnt = n - 1;
+Node *head = NULL;
+Node *tmp = NULL;
+Node *spear = NULL;
+Node *current = NULL;
+
+void Josep(int n, int k)
+{
     for (int i = 1; i <= n; i++)
     {
-        josephus[i] = i;
-    }
+        // Create tmp Node
+        tmp = (Node *)malloc(sizeof(Node));
+        tmp->data = i;
+        tmp->next = NULL;
+        tmp->prev = NULL;
 
-    printf("<");
-    printf("%d, ", k);
-    int tmp = k;
-    josephus[k] = 0;
-    while (cnt != 0)
-    {
-        if (josephus[(k + tmp) % n] != 0)
+        if (head == NULL)
         {
-            printf("%d, ", josephus[(k + tmp) % n]);
-            josephus[(k + tmp) % n] = 0;
-            cnt--;
-            k = (k + tmp) % n;
+            head = tmp;
+            current = tmp;
         }
         else
         {
-            k = (k + tmp) % n;
-            if (k == 0)
-            {
-                k = 1;
-            }
+            current->next = tmp;
+            tmp->prev = current;
+            current = tmp;
         }
     }
+    current->next = head;
+    head->prev = current;
+    printf("<");
+    // --------------
+    // for loop 6 times
+    for (int cnt = 0; cnt < n - 1; cnt++)
+    {
+        // for loop k - 1 times
+        spear = head;
+        for (int j = 0; j < k - 1; j++)
+        {
+            spear = spear->next;
+        }
+        printf("%d, ", spear->data);
+        spear->prev->next = spear->next;
+        spear->next->prev = spear->prev;
+        head = spear->next;
+        free(spear);
+    }
+    // --------------
+    printf("%d", head->data);
     printf(">");
+    free(head);
+}
 
+int main()
+{
+    int n, k;
+    scanf("%d %d", &n, &k);
+
+    // (n, k)
+    Josep(n, k);
     return 0;
 }
