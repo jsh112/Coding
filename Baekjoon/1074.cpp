@@ -1,49 +1,35 @@
 #include <iostream>
 #include <vector>
 
-int sum = 0;
-
-int pow(int n, int x) {
-    int result = 1;
-    for (int i = 0; i < x; i++) {
-        result *= n;
-    }
-    return result;
-}
-
-int draw_z(int sz, int goal_row, int goal_col) {
-    int status = 0;
-    if (sz == 0) {
+int Zdraw(int size, int _row, int _col) {
+    if (size == 0)
         return 0;
-    } else {
-        int half = pow(2, sz - 1);
 
-        if (goal_row >= half)
-            status += 2;
-        if (goal_col >= half)
-            status += 1;
+    int half_size = 1 << (size - 1);
+    int area = half_size * half_size;
 
-        int factor = pow(half, 2);
+    int status = (_row >= half_size ? 2 : 0) + (_col >= half_size ? 1 : 0);
 
-        if (status == 1) {
-            sum += (factor + draw_z(sz - 1, goal_row, goal_col - half));
-        } else if (status == 2) {
-            sum += (status * factor + draw_z(sz - 1, goal_row - half, goal_col));
-        } else if (status == 3) {
-            sum += (status * factor + draw_z(sz - 1, goal_row - half, goal_col - half));
-        } else {
-            return draw_z(sz - 1, goal_row, goal_col);
-        }
+    switch (status) {
+        case 1:
+            return status * area + Zdraw(size - 1, _row, _col - half_size);
+        case 2:
+            return status * area + Zdraw(size - 1, _row - half_size, _col);
+        case 3:
+            return status * area + Zdraw(size - 1, _row - half_size, _col - half_size);
+        default:
+            return Zdraw(size - 1, _row, _col);
     }
-    return sum;
 }
 
 int main() {
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(0);
     int sz, row, col;
     std::cin >> sz >> row >> col;
 
-    int result = draw_z(sz, row, col);
-    std::cout << result;
+    int result = Zdraw(sz, row, col);
+    std::cout << result << '\n';
 
     return 0;
 }
