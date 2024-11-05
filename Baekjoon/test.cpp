@@ -2,9 +2,8 @@
 
 int main(){
 
-    char str[100] = "Hello World!";
-
-    printf("%s\n",str);
+    char a,b,c;
+    
 
     return 0;
 }
